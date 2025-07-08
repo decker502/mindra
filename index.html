@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindra - 冥想应用</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 首页 -->
+        <main id="home" class="page active">
+            <header class="page-header">
+                <div class="greeting">
+                    <h1>下午好！</h1>
+                    <p>准备好开始今天的冥想之旅吗？</p>
+                </div>
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <section class="daily-goal">
+                <div class="goal-card">
+                    <div class="goal-info">
+                        <h3>今日目标</h3>
+                        <p>20分钟冥想</p>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-circle">
+                            <span>75%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="quick-actions">
+                <div class="action-grid">
+                    <button class="action-btn primary" onclick="startMeditation()">
+                        <i class="fas fa-play"></i>
+                        <span>开始冥想</span>
+                    </button>
+                    <button class="action-btn" onclick="showPage('library')">
+                        <i class="fas fa-music"></i>
+                        <span>浏览素材</span>
+                    </button>
+                    <button class="action-btn" onclick="showPage('progress')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>查看进度</span>
+                    </button>
+                    <button class="action-btn" onclick="showTimerModal()">
+                        <i class="fas fa-clock"></i>
+                        <span>定时冥想</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="recommendations">
+                <h2>推荐内容</h2>
+                <div class="session-grid" id="recommendedSessions">
+                    <!-- 推荐内容会通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <section class="recent-sessions">
+                <h2>最近播放</h2>
+                <div class="session-list" id="recentSessions">
+                    <!-- 最近播放会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 素材库 -->
+        <main id="library" class="page">
+            <header class="page-header">
+                <h1>素材库</h1>
+                <button class="add-btn" onclick="showAddModal()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </header>
+
+            <section class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="搜索冥想素材..." id="searchInput">
+                </div>
+            </section>
+
+            <section class="categories">
+                <div class="category-tabs" id="categoryTabs">
+                    <!-- 分类标签会通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <section class="library-content">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="toggleView('grid')">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" onclick="toggleView('list')">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <div class="session-grid" id="libraryGrid">
+                    <!-- 素材列表会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 播放页 -->
+        <main id="player" class="page">
+            <header class="page-header">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>播放中</h1>
+                <button class="menu-btn" onclick="showPlayerMenu()">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </header>
+
+            <section class="player-content">
+                <div class="album-art">
+                    <img id="currentImage" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop" alt="冥想封面">
+                    <div class="player-overlay">
+                        <button class="favorite-btn" onclick="toggleFavorite()">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="track-info">
+                    <h2 id="currentTitle">晨间正念冥想</h2>
+                    <p id="currentCategory">专注</p>
+                </div>
+
+                <div class="player-controls">
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">10:00</span>
+                        </div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="previousTrack()">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="control-btn play-btn" onclick="togglePlayPause()">
+                            <i class="fas fa-play" id="playIcon"></i>
+                        </button>
+                        <button class="control-btn" onclick="nextTrack()">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+
+                    <div class="player-options">
+                        <button class="option-btn" onclick="toggleRepeat()">
+                            <i class="fas fa-redo" id="repeatIcon"></i>
+                        </button>
+                        <button class="option-btn" onclick="showTimerSetting()">
+                            <i class="fas fa-clock"></i>
+                        </button>
+                        <button class="option-btn" onclick="showSoundEffects()">
+                            <i class="fas fa-water"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 计划与统计 -->
+        <main id="progress" class="page">
+            <header class="page-header">
+                <h1>我的进度</h1>
+                <button class="settings-btn" onclick="showGoalModal()">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </header>
+
+            <section class="stats-overview">
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>连续天数</h3>
+                            <p class="stat-value">7天</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>本周时长</h3>
+                            <p class="stat-value">125分钟</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>总次数</h3>
+                            <p class="stat-value">23次</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="weekly-chart">
+                <h2>本周冥想时长</h2>
+                <div class="chart-container">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </section>
+
+            <section class="achievements">
+                <h2>成就徽章</h2>
+                <div class="badge-grid">
+                    <div class="badge earned">
+                        <i class="fas fa-seedling"></i>
+                        <span>冥想新手</span>
+                    </div>
+                    <div class="badge earned">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>连续一周</span>
+                    </div>
+                    <div class="badge earned">
+                        <i class="fas fa-brain"></i>
+                        <span>专注大师</span>
+                    </div>
+                    <div class="badge locked">
+                        <i class="fas fa-crown"></i>
+                        <span>冥想达人</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="calendar-view">
+                <h2>冥想历史</h2>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- 日历会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 个人中心 -->
+        <main id="profile" class="page">
+            <header class="page-header">
+                <h1>个人中心</h1>
+            </header>
+
+            <section class="profile-info">
+                <div class="profile-card">
+                    <div class="profile-avatar large">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-details">
+                        <h2>冥想者</h2>
+                        <p>已冥想 23 次</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-sections">
+                <div class="settings-group">
+                    <h3>个性化设置</h3>
+                    <div class="settings-item" onclick="showThemeModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-palette"></i>
+                            <span>主题设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="settings-item" onclick="showLanguageModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-language"></i>
+                            <span>语言设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="settings-item" onclick="showNotificationModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-bell"></i>
+                            <span>通知设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>应用设置</h3>
+                    <div class="settings-item" onclick="showPrivacyModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>隐私设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="settings-item" onclick="showStorageModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-database"></i>
+                            <span>存储管理</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <h3>帮助与支持</h3>
+                    <div class="settings-item" onclick="showHelpModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-question-circle"></i>
+                            <span>帮助中心</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="settings-item" onclick="showFeedbackModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-comment"></i>
+                            <span>意见反馈</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="settings-item" onclick="showAboutModal()">
+                        <div class="setting-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>关于应用</span>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="showPage('home')">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </button>
+            <button class="nav-item" onclick="showPage('library')">
+                <i class="fas fa-music"></i>
+                <span>素材库</span>
+            </button>
+            <button class="nav-item" onclick="showPage('player')">
+                <i class="fas fa-play-circle"></i>
+                <span>播放</span>
+            </button>
+            <button class="nav-item" onclick="showPage('progress')">
+                <i class="fas fa-chart-line"></i>
+                <span>进度</span>
+            </button>
+            <button class="nav-item" onclick="showPage('profile')">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">标题</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 模态框内容会通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
