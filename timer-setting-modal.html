@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定时设置 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="modal-page">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>定时设置</h3>
+                    <button type="button" class="modal-close" onclick="window.close()" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">定时结束</label>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <button type="button" class="btn btn--outline" onclick="setEndTimer(10)">10分钟后</button>
+                            <button type="button" class="btn btn--outline" onclick="setEndTimer(20)">20分钟后</button>
+                            <button type="button" class="btn btn--outline" onclick="setEndTimer(30)">30分钟后</button>
+                            <button type="button" class="btn btn--outline" onclick="setEndTimer(60)">60分钟后</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">结束后操作</label>
+                        <select class="form-control" id="endAction">
+                            <option value="stop">停止播放</option>
+                            <option value="fadeOut">淡出结束</option>
+                            <option value="nextTrack">播放下一首</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="button" class="btn btn--primary" onclick="confirmTimerSetting()">确定</button>
+                        <button type="button" class="btn btn--outline" onclick="window.close()">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setEndTimer(minutes) {
+            console.log(`设置定时结束: ${minutes}分钟`);
+            
+            // 高亮选中的按钮
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.remove('btn--primary');
+                btn.classList.add('btn--outline');
+            });
+            event.target.classList.remove('btn--outline');
+            event.target.classList.add('btn--primary');
+        }
+
+        function confirmTimerSetting() {
+            const endAction = document.getElementById('endAction').value;
+            console.log(`确认定时设置，结束动作: ${endAction}`);
+            alert('定时设置已保存');
+            window.close();
+        }
+    </script>
+</body>
+</html>

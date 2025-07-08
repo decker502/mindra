@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加素材 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="modal-page">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>添加冥想素材</h3>
+                    <button type="button" class="modal-close" onclick="window.close()" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">添加方式</label>
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <button type="button" class="btn btn--primary" onclick="addFromLocal()">
+                                <i class="fas fa-upload"></i> 本地导入
+                            </button>
+                            <button type="button" class="btn btn--outline" onclick="addFromUrl()">
+                                <i class="fas fa-link"></i> 网络链接
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" id="urlGroup" style="display: none;">
+                        <label class="form-label">网络链接</label>
+                        <input type="url" class="form-control" placeholder="请输入音频链接" id="audioUrl">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">标题</label>
+                        <input type="text" class="form-control" placeholder="请输入冥想标题" id="newTitle">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">时长</label>
+                        <input type="text" class="form-control" placeholder="例如：10分钟" id="newDuration">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">分类</label>
+                        <select class="form-control" id="newCategory">
+                            <option value="专注">专注</option>
+                            <option value="睡前">睡前</option>
+                            <option value="放松">放松</option>
+                            <option value="自然音效">自然音效</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">描述</label>
+                        <textarea class="form-control" rows="3" placeholder="请输入描述" id="newDescription"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="button" class="btn btn--primary" onclick="saveNewSession()">保存</button>
+                        <button type="button" class="btn btn--outline" onclick="window.close()">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 从本地添加
+        function addFromLocal() {
+            alert('本地导入功能：在实际应用中，这里会打开文件选择器');
+        }
+
+        // 从网络添加
+        function addFromUrl() {
+            const urlGroup = document.getElementById('urlGroup');
+            urlGroup.style.display = urlGroup.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // 保存新会话
+        function saveNewSession() {
+            const title = document.getElementById('newTitle').value;
+            const duration = document.getElementById('newDuration').value;
+            const category = document.getElementById('newCategory').value;
+            const description = document.getElementById('newDescription').value;
+            
+            if (!title || !duration) {
+                alert('请填写标题和时长');
+                return;
+            }
+            
+            const newSession = {
+                id: Date.now(),
+                title,
+                duration,
+                category,
+                description,
+                image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+            };
+            
+            // 保存到本地存储
+            let sessions = JSON.parse(localStorage.getItem('customSessions') || '[]');
+            sessions.push(newSession);
+            localStorage.setItem('customSessions', JSON.stringify(sessions));
+            
+            alert('素材添加成功！');
+            window.close();
+        }
+    </script>
+</body>
+</html>

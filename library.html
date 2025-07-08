@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>素材库 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 素材库 -->
+        <main class="page active">
+            <header class="page-header">
+                <h1>素材库</h1>
+                <button type="button" class="add-btn" onclick="showAddModal()" title="添加素材">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </header>
+
+            <section class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="搜索冥想素材..." id="searchInput">
+                </div>
+            </section>
+
+            <section class="categories">
+                <div class="category-tabs" id="categoryTabs">
+                    <!-- 分类标签会通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <section class="library-content">
+                <div class="view-toggle">
+                    <button type="button" class="view-btn active" onclick="toggleView('grid')" title="网格视图">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button type="button" class="view-btn" onclick="toggleView('list')" title="列表视图">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <div class="session-grid" id="libraryGrid">
+                    <!-- 素材列表会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="library.html" class="nav-item active">
+                <i class="fas fa-music"></i>
+                <span>素材库</span>
+            </a>
+            <a href="player.html" class="nav-item">
+                <i class="fas fa-play-circle"></i>
+                <span>播放</span>
+            </a>
+            <a href="progress.html" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>进度</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 页面初始化 - app.js会自动处理页面特定的初始化
+        // 移除重复的函数定义，使用app.js中的统一函数
+    </script>
+</body>
+</html>

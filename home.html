@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 首页 -->
+        <main class="page active">
+            <header class="page-header">
+                <div class="greeting">
+                    <h1>下午好！</h1>
+                    <p>准备好开始今天的冥想之旅吗？</p>
+                </div>
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <section class="daily-goal">
+                <div class="goal-card">
+                    <div class="goal-info">
+                        <h3>今日目标</h3>
+                        <p>20分钟冥想</p>
+                    </div>
+                    <div class="goal-progress">
+                        <div class="progress-circle">
+                            <span>75%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="quick-actions">
+                <div class="action-grid">
+                    <button type="button" class="action-btn primary" onclick="startMeditation()">
+                        <i class="fas fa-play"></i>
+                        <span>开始冥想</span>
+                    </button>
+                    <button type="button" class="action-btn" onclick="navigateToLibrary()">
+                        <i class="fas fa-music"></i>
+                        <span>浏览素材</span>
+                    </button>
+                    <button type="button" class="action-btn" onclick="navigateToProgress()">
+                        <i class="fas fa-chart-line"></i>
+                        <span>查看进度</span>
+                    </button>
+                    <button type="button" class="action-btn" onclick="showTimerModal()">
+                        <i class="fas fa-clock"></i>
+                        <span>定时冥想</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="recommendations">
+                <h2>推荐内容</h2>
+                <div class="session-grid" id="recommendedSessions">
+                    <!-- 推荐内容会通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <section class="recent-sessions">
+                <h2>最近播放</h2>
+                <div class="session-list" id="recentSessions">
+                    <!-- 最近播放会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="library.html" class="nav-item">
+                <i class="fas fa-music"></i>
+                <span>素材库</span>
+            </a>
+            <a href="player.html" class="nav-item">
+                <i class="fas fa-play-circle"></i>
+                <span>播放</span>
+            </a>
+            <a href="progress.html" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>进度</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 页面初始化 - app.js会自动处理页面特定的初始化
+        // 移除重复的函数定义，使用app.js中的统一函数
+    </script>
+</body>
+</html>

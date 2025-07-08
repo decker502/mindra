@@ -65,8 +65,7 @@ const appData = {
   ]
 };
 
-// 应用状态
-let currentPage = 'home';
+// 应用状态 - 使用localStorage进行跨页面状态管理
 let currentSession = null;
 let isPlaying = false;
 let currentTime = 0;
@@ -77,9 +76,69 @@ let viewMode = 'grid';
 let favorites = new Set();
 let isRepeating = false;
 
+// 跨页面状态管理
+const AppState = {
+  // 保存状态到localStorage
+  save: function(key, value) {
+    try {
+      localStorage.setItem(`mindra_${key}`, JSON.stringify(value));
+    } catch (e) {
+      console.warn('无法保存状态到localStorage:', e);
+    }
+  },
+
+  // 从localStorage读取状态
+  load: function(key, defaultValue = null) {
+    try {
+      const value = localStorage.getItem(`mindra_${key}`);
+      return value ? JSON.parse(value) : defaultValue;
+    } catch (e) {
+      console.warn('无法从localStorage读取状态:', e);
+      return defaultValue;
+    }
+  },
+
+  // 删除状态
+  remove: function(key) {
+    try {
+      localStorage.removeItem(`mindra_${key}`);
+    } catch (e) {
+      console.warn('无法删除localStorage状态:', e);
+    }
+  }
+};
+
+// 页面导航工具
+const PageNavigation = {
+  // 导航到指定页面
+  navigateTo: function(page, data = null) {
+    if (data) {
+      AppState.save('navigationData', data);
+    }
+    window.location.href = `${page}.html`;
+  },
+
+  // 返回上一页
+  goBack: function() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'index.html';
+    }
+  },
+
+  // 获取导航数据
+  getNavigationData: function() {
+    const data = AppState.load('navigationData');
+    AppState.remove('navigationData'); // 使用后清除
+    return data;
+  }
+};
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', function() {
   initializeApp();
+  loadAppState();
   updateGreeting();
   renderRecommendedSessions();
   renderRecentSessions();
@@ -87,12 +146,49 @@ document.addEventListener('DOMContentLoaded', function() {
   renderCategoryTabs();
   renderCalendar();
   setupEventListeners();
+  setupPageSpecificFeatures();
 });
 
 // 初始化应用
 function initializeApp() {
-  showPage('home');
-  updateNavigation();
+  // 检查是否有导航数据
+  const navData = PageNavigation.getNavigationData();
+  if (navData) {
+    handleNavigationData(navData);
+  }
+}
+
+// 加载应用状态
+function loadAppState() {
+  currentSession = AppState.load('currentSession');
+  isPlaying = AppState.load('isPlaying', false);
+  currentTime = AppState.load('currentTime', 0);
+  totalTime = AppState.load('totalTime', 600);
+  currentCategory = AppState.load('currentCategory', '全部');
+  viewMode = AppState.load('viewMode', 'grid');
+  favorites = new Set(AppState.load('favorites', []));
+  isRepeating = AppState.load('isRepeating', false);
+}
+
+// 保存应用状态
+function saveAppState() {
+  AppState.save('currentSession', currentSession);
+  AppState.save('isPlaying', isPlaying);
+  AppState.save('currentTime', currentTime);
+  AppState.save('totalTime', totalTime);
+  AppState.save('currentCategory', currentCategory);
+  AppState.save('viewMode', viewMode);
+  AppState.save('favorites', Array.from(favorites));
+  AppState.save('isRepeating', isRepeating);
+}
+
+// 处理导航数据
+function handleNavigationData(data) {
+  if (data.type === 'playSession' && data.sessionId) {
+    playSession(data.sessionId);
+  } else if (data.type === 'filterCategory' && data.category) {
+    filterByCategory(data.category);
+  }
 }
 
 // 更新问候语
@@ -114,41 +210,86 @@ function updateGreeting() {
   }
 }
 
-// 页面导航
+// 页面导航 - 多文件版本
 function showPage(pageId) {
-  // 隐藏所有页面
-  document.querySelectorAll('.page').forEach(page => {
-    page.classList.remove('active');
-  });
-  
-  // 显示目标页面
-  const targetPage = document.getElementById(pageId);
-  if (targetPage) {
-    targetPage.classList.add('active');
-    currentPage = pageId;
-    updateNavigation();
-  }
-}
+  // 保存当前状态
+  saveAppState();
 
-// 更新导航栏
-function updateNavigation() {
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  
-  const activeNavItem = document.querySelector(`.nav-item[onclick="showPage('${currentPage}')"]`);
-  if (activeNavItem) {
-    activeNavItem.classList.add('active');
-  }
+  // 导航到指定页面
+  PageNavigation.navigateTo(pageId);
 }
 
 // 返回上一页
 function goBack() {
-  if (currentPage === 'player') {
-    showPage('home');
-  } else {
-    showPage('home');
+  PageNavigation.goBack();
+}
+
+// 页面特定功能设置
+function setupPageSpecificFeatures() {
+  const currentPage = getCurrentPageName();
+
+  // 更新导航状态
+  NavigationManager.updateBottomNavigation();
+
+  switch(currentPage) {
+    case 'home':
+      setupHomePage();
+      break;
+    case 'library':
+      setupLibraryPage();
+      break;
+    case 'player':
+      setupPlayerPage();
+      break;
+    case 'progress':
+      setupProgressPage();
+      break;
+    case 'profile':
+      setupProfilePage();
+      break;
   }
+}
+
+// 获取当前页面名称
+function getCurrentPageName() {
+  const path = window.location.pathname;
+  const filename = path.split('/').pop();
+  return filename.replace('.html', '') || 'index';
+}
+
+// 设置首页特定功能
+function setupHomePage() {
+  // 首页特定的初始化逻辑
+  updateGreeting();
+  renderRecommendedSessions();
+  renderRecentSessions();
+}
+
+// 设置素材库页面特定功能
+function setupLibraryPage() {
+  // 素材库特定的初始化逻辑
+  renderLibraryGrid();
+  renderCategoryTabs();
+}
+
+// 设置播放器页面特定功能
+function setupPlayerPage() {
+  // 播放器特定的初始化逻辑
+  if (currentSession) {
+    updatePlayerDisplay();
+    updatePlayerUI();
+  }
+}
+
+// 设置进度页面特定功能
+function setupProgressPage() {
+  // 进度页面特定的初始化逻辑
+  renderCalendar();
+}
+
+// 设置个人中心页面特定功能
+function setupProfilePage() {
+  // 个人中心特定的初始化逻辑
 }
 
 // 渲染推荐内容
@@ -264,16 +405,21 @@ function renderLibraryGrid() {
 }
 
 // 切换视图模式
-function toggleView(mode) {
+function toggleView(mode, element) {
   viewMode = mode;
-  
+
   // 更新按钮状态
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.classList.remove('active');
   });
-  
-  event.target.classList.add('active');
-  
+
+  if (element) {
+    element.classList.add('active');
+  }
+
+  // 保存状态
+  saveAppState();
+
   // 重新渲染
   renderLibraryGrid();
 }
@@ -282,21 +428,35 @@ function toggleView(mode) {
 function playSession(sessionId) {
   const session = appData.meditationSessions.find(s => s.id === sessionId);
   if (!session) return;
-  
+
   currentSession = session;
-  
-  // 更新播放页面信息
-  document.getElementById('currentImage').src = session.image;
-  document.getElementById('currentTitle').textContent = session.title;
-  document.getElementById('currentCategory').textContent = session.category;
-  
+
   // 重置播放状态
   currentTime = 0;
   totalTime = parseInt(session.duration) * 60; // 转换为秒
   isPlaying = false;
-  
-  updatePlayerUI();
-  showPage('player');
+
+  // 保存状态
+  saveAppState();
+
+  // 导航到播放器页面，传递会话数据
+  PageNavigation.navigateTo('player', {
+    type: 'playSession',
+    sessionId: sessionId
+  });
+}
+
+// 更新播放器显示信息
+function updatePlayerDisplay() {
+  if (!currentSession) return;
+
+  const currentImage = document.getElementById('currentImage');
+  const currentTitle = document.getElementById('currentTitle');
+  const currentCategory = document.getElementById('currentCategory');
+
+  if (currentImage) currentImage.src = currentSession.image;
+  if (currentTitle) currentTitle.textContent = currentSession.title;
+  if (currentCategory) currentCategory.textContent = currentSession.category;
 }
 
 // 开始冥想（快速开始）
@@ -306,16 +466,36 @@ function startMeditation() {
   }
 }
 
+// 导航到素材库
+function navigateToLibrary() {
+  saveAppState();
+  PageNavigation.navigateTo('library');
+}
+
+// 导航到进度页面
+function navigateToProgress() {
+  saveAppState();
+  PageNavigation.navigateTo('progress');
+}
+
+// 导航到个人中心
+function navigateToProfile() {
+  saveAppState();
+  PageNavigation.navigateTo('profile');
+}
+
 // 播放/暂停控制
 function togglePlayPause() {
   isPlaying = !isPlaying;
-  
+
   if (isPlaying) {
     startPlayTimer();
   } else {
     stopPlayTimer();
   }
-  
+
+  // 保存状态
+  saveAppState();
   updatePlayerUI();
 }
 
@@ -541,20 +721,70 @@ function debounce(func, wait) {
   };
 }
 
-// 模态框功能
+// 模态框功能 - 支持多页面
+const ModalManager = {
+  // 显示模态框
+  show: function(title, content) {
+    // 检查当前页面是否有模态框容器
+    let modal = document.getElementById('modal');
+
+    if (!modal) {
+      // 如果没有模态框容器，创建一个
+      this.createModalContainer();
+      modal = document.getElementById('modal');
+    }
+
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalBody) modalBody.innerHTML = content;
+    if (modal) modal.classList.add('active');
+  },
+
+  // 关闭模态框
+  close: function() {
+    const modal = document.getElementById('modal');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+  },
+
+  // 创建模态框容器
+  createModalContainer: function() {
+    const modalHTML = `
+      <div id="modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle"></h2>
+            <button class="modal-close" onclick="ModalManager.close()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" id="modalBody"></div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // 添加点击外部关闭功能
+    const modal = document.getElementById('modal');
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.close();
+      }
+    });
+  }
+};
+
+// 兼容性函数
 function showModal(title, content) {
-  const modal = document.getElementById('modal');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
-  
-  modalTitle.textContent = title;
-  modalBody.innerHTML = content;
-  modal.classList.add('active');
+  ModalManager.show(title, content);
 }
 
 function closeModal() {
-  const modal = document.getElementById('modal');
-  modal.classList.remove('active');
+  ModalManager.close();
 }
 
 // 显示添加素材模态框
@@ -717,7 +947,7 @@ function showSoundEffects() {
       <label class="form-label">背景音效</label>
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         ${appData.soundEffects.map(effect => `
-          <button class="btn btn--outline" onclick="toggleSoundEffect('${effect.name}')">
+          <button class="btn btn--outline" onclick="toggleSoundEffect('${effect.name}', this)">
             <i class="fas fa-${effect.icon}"></i>
             ${effect.name}
           </button>
@@ -732,16 +962,17 @@ function showSoundEffects() {
       <button class="btn btn--primary" onclick="closeModal()">确定</button>
     </div>
   `;
-  
+
   showModal('音效设置', content);
 }
 
 // 切换音效
-function toggleSoundEffect(effectName) {
-  const button = event.target;
-  button.classList.toggle('btn--primary');
-  button.classList.toggle('btn--outline');
-  
+function toggleSoundEffect(effectName, element) {
+  if (element) {
+    element.classList.toggle('btn--primary');
+    element.classList.toggle('btn--outline');
+  }
+
   // 在实际应用中，这里会控制音效的播放
   console.log(`切换音效: ${effectName}`);
 }
@@ -1071,7 +1302,86 @@ window.addEventListener('load', function() {
 
 // 防止页面刷新时丢失播放状态
 window.addEventListener('beforeunload', function() {
+  // 保存当前状态
+  saveAppState();
+
   if (playTimer) {
     clearInterval(playTimer);
   }
 });
+
+// 页面可见性变化时保存状态
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    saveAppState();
+  }
+});
+
+// 导航组件管理器
+const NavigationManager = {
+  // 更新底部导航的活跃状态
+  updateBottomNavigation: function() {
+    const currentPage = getCurrentPageName();
+    const navItems = document.querySelectorAll('.bottom-nav .nav-item');
+
+    navItems.forEach(item => {
+      item.classList.remove('active');
+      const href = item.getAttribute('href');
+      if (href && href.includes(currentPage)) {
+        item.classList.add('active');
+      }
+    });
+  },
+
+  // 创建统一的底部导航
+  createBottomNavigation: function() {
+    const currentPage = getCurrentPageName();
+    const navHTML = `
+      <nav class="bottom-nav">
+        <a href="home.html" class="nav-item ${currentPage === 'home' ? 'active' : ''}">
+          <i class="fas fa-home"></i>
+          <span>首页</span>
+        </a>
+        <a href="library.html" class="nav-item ${currentPage === 'library' ? 'active' : ''}">
+          <i class="fas fa-music"></i>
+          <span>素材库</span>
+        </a>
+        <a href="player.html" class="nav-item ${currentPage === 'player' ? 'active' : ''}">
+          <i class="fas fa-play-circle"></i>
+          <span>播放</span>
+        </a>
+        <a href="progress.html" class="nav-item ${currentPage === 'progress' ? 'active' : ''}">
+          <i class="fas fa-chart-line"></i>
+          <span>进度</span>
+        </a>
+        <a href="profile.html" class="nav-item ${currentPage === 'profile' ? 'active' : ''}">
+          <i class="fas fa-user"></i>
+          <span>我的</span>
+        </a>
+      </nav>
+    `;
+
+    return navHTML;
+  },
+
+  // 创建页面头部导航
+  createPageHeader: function(title, showBackButton = true) {
+    const backButtonHTML = showBackButton ? `
+      <div class="nav-controls">
+        <button type="button" class="nav-btn" onclick="goBack()" title="返回">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+    ` : '';
+
+    return `
+      <header class="page-header">
+        ${backButtonHTML}
+        <h1 class="page-title">${title}</h1>
+        <div class="header-actions">
+          <!-- 可以添加其他头部操作按钮 -->
+        </div>
+      </header>
+    `;
+  }
+};

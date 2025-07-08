@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音效设置 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="modal-page">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>音效设置</h3>
+                    <button type="button" class="modal-close" onclick="window.close()" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">背景音效</label>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <button type="button" class="btn btn--outline" onclick="toggleSoundEffect('雨声', 'cloud-rain')">
+                                <i class="fas fa-cloud-rain"></i>
+                                雨声
+                            </button>
+                            <button type="button" class="btn btn--outline" onclick="toggleSoundEffect('海浪', 'water')">
+                                <i class="fas fa-water"></i>
+                                海浪
+                            </button>
+                            <button type="button" class="btn btn--outline" onclick="toggleSoundEffect('风铃', 'wind')">
+                                <i class="fas fa-wind"></i>
+                                风铃
+                            </button>
+                            <button type="button" class="btn btn--outline" onclick="toggleSoundEffect('鸟鸣', 'dove')">
+                                <i class="fas fa-dove"></i>
+                                鸟鸣
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">音量控制</label>
+                        <input type="range" class="form-control" min="0" max="100" value="50" id="volumeControl">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">
+                            <span>0</span>
+                            <span id="volumeValue">50</span>
+                            <span>100</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="button" class="btn btn--primary" onclick="window.close()">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换音效
+        function toggleSoundEffect(effectName, iconName) {
+            const button = event.target;
+            button.classList.toggle('btn--primary');
+            button.classList.toggle('btn--outline');
+            
+            console.log(`切换音效: ${effectName}`);
+        }
+
+        // 音量控制
+        document.addEventListener('DOMContentLoaded', function() {
+            const volumeControl = document.getElementById('volumeControl');
+            const volumeValue = document.getElementById('volumeValue');
+            
+            if (volumeControl && volumeValue) {
+                volumeControl.addEventListener('input', function() {
+                    volumeValue.textContent = this.value;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

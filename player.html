@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>播放器 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 播放页 -->
+        <main class="page active">
+            <header class="page-header">
+                <button type="button" class="back-btn" onclick="goBack()" title="返回上一页">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>播放中</h1>
+                <button type="button" class="menu-btn" onclick="showPlayerMenu()" title="更多选项">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </header>
+
+            <section class="player-content">
+                <div class="album-art">
+                    <img id="currentImage" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop" alt="冥想封面">
+                    <div class="player-overlay">
+                        <button type="button" class="favorite-btn" onclick="toggleFavorite()" title="收藏">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="track-info">
+                    <h2 id="currentTitle">晨间正念冥想</h2>
+                    <p id="currentCategory">专注</p>
+                </div>
+
+                <div class="player-controls">
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                        <div class="time-display">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">10:00</span>
+                        </div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button type="button" class="control-btn" onclick="previousTrack()" title="上一首">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button type="button" class="control-btn play-btn" onclick="togglePlayPause()" title="播放/暂停">
+                            <i class="fas fa-play" id="playIcon"></i>
+                        </button>
+                        <button type="button" class="control-btn" onclick="nextTrack()" title="下一首">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                    </div>
+
+                    <div class="player-options">
+                        <button type="button" class="option-btn" onclick="toggleRepeat()" title="重复播放">
+                            <i class="fas fa-redo" id="repeatIcon"></i>
+                        </button>
+                        <button type="button" class="option-btn" onclick="window.open('timer-setting-modal.html', '_blank')" title="定时设置">
+                            <i class="fas fa-clock"></i>
+                        </button>
+                        <button type="button" class="option-btn" onclick="window.open('sound-effects-modal.html', '_blank')" title="音效设置">
+                            <i class="fas fa-water"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="library.html" class="nav-item">
+                <i class="fas fa-music"></i>
+                <span>素材库</span>
+            </a>
+            <a href="player.html" class="nav-item active">
+                <i class="fas fa-play-circle"></i>
+                <span>播放</span>
+            </a>
+            <a href="progress.html" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>进度</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 页面初始化 - app.js会自动处理页面特定的初始化
+        // 移除重复的函数定义，使用app.js中的统一函数
+    </script>
+</body>
+</html>

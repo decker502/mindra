@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进度统计 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 计划与统计 -->
+        <main class="page active">
+            <header class="page-header">
+                <h1>我的进度</h1>
+                <button type="button" class="settings-btn" onclick="showGoalModal()" title="目标设置">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </header>
+
+            <section class="stats-overview">
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>连续天数</h3>
+                            <p class="stat-value">7天</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>本周时长</h3>
+                            <p class="stat-value">125分钟</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>总次数</h3>
+                            <p class="stat-value">23次</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="weekly-chart">
+                <h2>本周冥想时长</h2>
+                <div class="chart-container">
+                    <canvas id="weeklyChart"></canvas>
+                </div>
+            </section>
+
+            <section class="achievements">
+                <h2>成就徽章</h2>
+                <div class="badge-grid">
+                    <div class="badge earned">
+                        <i class="fas fa-seedling"></i>
+                        <span>冥想新手</span>
+                    </div>
+                    <div class="badge earned">
+                        <i class="fas fa-calendar-week"></i>
+                        <span>连续一周</span>
+                    </div>
+                    <div class="badge earned">
+                        <i class="fas fa-brain"></i>
+                        <span>专注大师</span>
+                    </div>
+                    <div class="badge locked">
+                        <i class="fas fa-crown"></i>
+                        <span>冥想达人</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="calendar-view">
+                <h2>冥想历史</h2>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- 日历会通过JavaScript动态生成 -->
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航 -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+            <a href="library.html" class="nav-item">
+                <i class="fas fa-music"></i>
+                <span>素材库</span>
+            </a>
+            <a href="player.html" class="nav-item">
+                <i class="fas fa-play-circle"></i>
+                <span>播放</span>
+            </a>
+            <a href="progress.html" class="nav-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>进度</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>我的</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // app.js会自动处理页面特定的初始化
+            drawWeeklyChart();
+        });
+
+        // 绘制周统计图表
+        function drawWeeklyChart() {
+            const canvas = document.getElementById('weeklyChart');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+
+            // 模拟数据
+            const weekData = [20, 15, 30, 25, 18, 22, 28];
+            const weekDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+
+            // 绘制简单的条形图
+            const barWidth = canvas.width / weekData.length;
+            const maxValue = Math.max(...weekData);
+
+            ctx.fillStyle = '#2196F3';
+
+            weekData.forEach((value, index) => {
+                const barHeight = (value / maxValue) * (canvas.height - 40);
+                const x = index * barWidth;
+                const y = canvas.height - barHeight - 20;
+
+                ctx.fillRect(x + 10, y, barWidth - 20, barHeight);
+
+                // 绘制标签
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(weekDays[index], x + barWidth / 2, canvas.height - 5);
+                ctx.fillText(value + '分', x + barWidth / 2, y - 5);
+
+                ctx.fillStyle = '#2196F3';
+            });
+        }
+    </script>
+</body>
+</html>

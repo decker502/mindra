@@ -736,6 +736,26 @@ body {
   color: var(--app-primary);
 }
 
+/* 导航控制 */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
 .greeting h1 {
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
@@ -775,7 +795,7 @@ body {
   gap: var(--space-8);
 }
 
-.add-btn, .back-btn, .menu-btn, .settings-btn {
+.add-btn, .back-btn, .menu-btn, .settings-btn, .nav-btn {
   background: var(--app-primary);
   color: white;
   border: none;
@@ -789,7 +809,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.add-btn:hover, .back-btn:hover, .menu-btn:hover, .settings-btn:hover {
+.add-btn:hover, .back-btn:hover, .menu-btn:hover, .settings-btn:hover, .nav-btn:hover {
   background: var(--app-secondary);
   transform: scale(1.05);
 }

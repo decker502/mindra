@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定时冥想 - Mindra</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="modal-page">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>定时冥想</h3>
+                    <button type="button" class="modal-close" onclick="window.close()" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">定时时长</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            <button type="button" class="btn btn--outline" onclick="setTimer(5)">5分钟</button>
+                            <button type="button" class="btn btn--outline" onclick="setTimer(10)">10分钟</button>
+                            <button type="button" class="btn btn--outline" onclick="setTimer(15)">15分钟</button>
+                            <button type="button" class="btn btn--outline" onclick="setTimer(20)">20分钟</button>
+                            <button type="button" class="btn btn--outline" onclick="setTimer(30)">30分钟</button>
+                            <button type="button" class="btn btn--outline" onclick="setTimer(60)">60分钟</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">自定义时长（分钟）</label>
+                        <input type="number" class="form-control" placeholder="请输入分钟数" id="customTimer" min="1" max="120">
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button type="button" class="btn btn--primary" onclick="startCustomTimer()">开始定时冥想</button>
+                        <button type="button" class="btn btn--outline" onclick="window.close()">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 设置定时器
+        function setTimer(minutes) {
+            document.getElementById('customTimer').value = minutes;
+        }
+
+        // 开始自定义定时冥想
+        function startCustomTimer() {
+            const customMinutes = document.getElementById('customTimer').value;
+            if (customMinutes && customMinutes > 0) {
+                // 创建定时冥想会话
+                const timerSession = {
+                    id: 'timer',
+                    title: `定时冥想 ${customMinutes}分钟`,
+                    duration: `${customMinutes}分钟`,
+                    category: '定时',
+                    description: '专注呼吸，享受宁静时光',
+                    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop'
+                };
+                
+                // 保存到本地存储
+                localStorage.setItem('currentSession', JSON.stringify(timerSession));
+                
+                // 关闭模态框并打开播放器
+                window.close();
+                window.opener.location.href = 'player.html';
+            } else {
+                alert('请输入有效的时长');
+            }
+        }
+    </script>
+</body>
+</html>
